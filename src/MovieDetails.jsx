@@ -27,7 +27,7 @@ export default function MovieDetails() {
     axios.get(`${detailsAPI}${id}`, apiHeaders).then((res) => {
       const _movie = res.data;
       setMovie(_movie);
-      console.log(_movie);
+      // console.log(_movie);
       const _movieData = {
         budget: numberWithCommas(_movie.budget),
         country: _movie.origin_country[0],
@@ -60,7 +60,9 @@ export default function MovieDetails() {
           <div className="flex bg-black ">
             <img
               onClick={(e) => {
-                navigate(Movie.homepage);
+                // navigate(Movie.homepage);
+                // window.location.href = Movie.homepage;
+                window.open(Movie.homepage, "_blank");
               }}
               className="w-full h-[100vh] object-scale-down relative hover:cursor-pointer"
               src={`${imageURL}${Movie.poster_path}`}
@@ -92,3 +94,19 @@ export default function MovieDetails() {
     </div>
   );
 }
+
+const Tooltip = () => {
+  const tooltipStyle = {
+    display: this.state.hover ? "block" : "none",
+  };
+  return (
+    <div>
+      <div onMouseOver={this.handleMouseIn.bind(this)} onMouseOut={this.handleMouseOut.bind(this)}>
+        on hover here we will show the tooltip
+      </div>
+      <div>
+        <div style={tooltipStyle}>this is the tooltip!!</div>
+      </div>
+    </div>
+  );
+};
