@@ -69,18 +69,16 @@ export default function Home() {
     <div className="bg-base-200 min-h-[100vh]">
       <div className="flex">
         <SideNavBar setCurrentList={setCurrentList} currentList={currentList} setPage={setPage} />
-        <section className="ml-8 max-w-[1200px] container py-12 ">
-          <div className="flex justify-between pr-24">
+        <section className="ml-8 max-w-[1200px] container  ">
+          <div className="flex justify-between pr-24 pt-6">
             <h1 className="font-bold text-4xl mb-12 text-base-content">{pageTitle}</h1>
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mr-8 mb-12">
-            {!loading && PopularMovies.length > 0 ? (
-              PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard movie={movie} Genres={Genres} />}</div>)
-            ) : (
-              // <div className="text-white text-3xl text-center absolute top-[50%] left-[40%]">Loading the movies...</div>
-              <MoviesSkeleton />
-            )}
+          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mr-8 mb-6">
+            {!loading && PopularMovies.length > 0 ? PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard movie={movie} Genres={Genres} />}</div>) : <MoviesSkeleton />}
+          </div>
+          <div className="text-center mb-6">
+            <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
         </section>
       </div>
