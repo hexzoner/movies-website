@@ -3,9 +3,10 @@ import favIcon from "./assets/heart-icon.svg";
 const imageURL = `https://image.tmdb.org/t/p//w300_and_h450_bestv2/`;
 const detailsURL = `https://www.themoviedb.org/movie/`;
 import { Link } from "react-router-dom";
+import noImage from "./assets/No-Image-Placeholder.png";
 
 export default function MovieCard({ movie, Genres }) {
-  // console.log(movie);
+  // console.log(movie.poster_path == null);
   let genresString = "";
   for (let movieGenreId of movie.genre_ids) {
     genresString += Genres.find((x) => x.id === movieGenreId).name + ", ";
@@ -15,7 +16,7 @@ export default function MovieCard({ movie, Genres }) {
   return (
     <div className="text-white  rounded-[18px] border-opacity-0 hover:cursor-pointer hover:border-opacity-50 border-solid border-primary border-2 relative">
       <Link to={`/movie/${movie.id}`} href={`${detailsURL}${movie.id}`}>
-        <img className="rounded-[18px] w-full  relative" src={`${imageURL}${movie.poster_path}`} alt={movie.title} />
+        <img className="rounded-[18px] w-full  relative" src={!movie.poster_path ? noImage : `${imageURL}${movie.poster_path}`} alt={movie.title} />
       </Link>
       <div className="pointer-events-none absolute bottom-0 w-full rounded-b-[18px] h-full flex flex-col justify-between">
         <div>
