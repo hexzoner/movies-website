@@ -41,8 +41,6 @@ export default function Home() {
     }
   }
 
-  useEffect(() => {}, []);
-
   useEffect(() => {
     setLoading(true);
     axios
@@ -58,15 +56,12 @@ export default function Home() {
           .get(genreURL, apiHeaders)
           .then((res) => SetGenres(res.data.genres))
           .catch((error) => console.error(error.message))
+          .finally(setLoading(false))
       );
   }, [currentList, page]);
 
-  useEffect(() => {
-    if (Genres.length > 0 && PopularMovies.length > 0) setLoading(false);
-  }, [Genres, PopularMovies]);
-
   return (
-    <div className="bg-base-200 min-h-[100vh]">
+    <div className="bg-base-200 min-h-[328vh]">
       <div className="flex">
         <SideNavBar setCurrentList={setCurrentList} currentList={currentList} setPage={setPage} />
         <section className="ml-8 max-w-[1200px] container  ">
@@ -75,7 +70,7 @@ export default function Home() {
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mr-8 mb-6">
-            {!loading && PopularMovies.length > 0 ? PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard movie={movie} Genres={Genres} />}</div>) : <MoviesSkeleton />}
+            {!loading && Genres.length > 0 && PopularMovies.length > 0 ? PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard movie={movie} Genres={Genres} />}</div>) : <MoviesSkeleton />}
           </div>
           <div className="text-center mb-6">
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
@@ -152,13 +147,10 @@ const SideNavBar = ({ setCurrentList, currentList, setPage }) => {
 };
 
 const Pagination = ({ page, setPage, totalPages }) => {
-  function prevPage() {
-    setPage(page - 1);
-  }
   return (
     <div className="join ">
       {page > 1 && (
-        <button onClick={prevPage} className="join-item btn btn-lg">
+        <button onClick={() => setPage(page - 1)} className="join-item btn btn-lg">
           «
         </button>
       )}

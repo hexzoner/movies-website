@@ -11,7 +11,7 @@ import BackButton from "./BackButton";
 export default function MovieDetails() {
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const detailsAPI = "https://api.themoviedb.org/3/movie/";
   const [Movie, setMovie] = useState({});
   const [MovieData, SetMovieData] = useState({
@@ -23,6 +23,10 @@ export default function MovieDetails() {
   });
 
   let genresString = "";
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
