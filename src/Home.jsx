@@ -61,7 +61,7 @@ export default function Home() {
   }, [currentList, page]);
 
   return (
-    <div className="bg-base-200 min-h-[328vh]">
+    <div className="bg-base-200 min-h-[200vh]">
       <div className="flex">
         <SideNavBar setCurrentList={setCurrentList} currentList={currentList} setPage={setPage} />
         <section className="ml-8 max-w-[1200px] container  ">
