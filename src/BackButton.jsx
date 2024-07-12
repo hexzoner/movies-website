@@ -1,11 +1,15 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
+import { MovieContex } from "./contex/MovieContex";
+import { useContext } from "react";
 
 const BackButton = () => {
+  const { position, setPage, setCurrentList, userPosition } = useContext(MovieContex);
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate(-1); // Go back to the previous page
+    navigate("/");
+    setCurrentList(userPosition.currentList);
+    setPage(userPosition.page);
   };
 
   return (

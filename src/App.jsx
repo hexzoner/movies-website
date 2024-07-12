@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 import About from "./About";
 import MovieDetails from "./MovieDetails";
 import PageNotFound from "./NotFound";
+import { MovieProvider } from "./contex/MovieProvider";
 
 export const apiHeaders = {
   method: "GET",
@@ -20,10 +21,12 @@ export const apiHeaders = {
 const MainLayout = () => {
   return (
     <>
-      <Navbar />
-      <div className="font-[lato]">
-        <Outlet />
-      </div>
+      <MovieProvider>
+        <Navbar />
+        <div className="font-[lato]">
+          <Outlet />
+        </div>
+      </MovieProvider>
       <Footer />
     </>
   );

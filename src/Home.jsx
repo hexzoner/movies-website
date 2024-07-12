@@ -1,12 +1,14 @@
 import axios from "axios";
 import MovieCard from "./MovieCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 // import { useFetcher } from "react-router-dom";
 import { apiHeaders } from "./App";
+import { MovieContex } from "./contex/MovieContex";
 const key = "movies-page";
 
 export default function Home() {
-  const [page, setPage] = useState(1);
+  const { position, setPosition, page, setPage, currentList, setCurrentList, userPosition } = useContext(MovieContex);
+
   const [totalPages, setTotalPages] = useState(1);
   const getPopularMoviesAPI = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`;
   const getUpcomingMoviesAPI = `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${page}`;
@@ -19,8 +21,15 @@ export default function Home() {
 
   const [PopularMovies, SetPopularMovies] = useState([]);
   const [Genres, SetGenres] = useState([]);
-  const [currentList, setCurrentList] = useState("popular");
+
   const [pageTitle, setPageTitle] = useState("Popular Movies");
+
+  function onMovieDetails() {
+    // setPosition({ currentList, page, scroll: window.scrollY });
+    userPosition.page = page;
+    userPosition.scroll = window.scrollY;
+    userPosition.currentList = currentList;
+  }
 
   function getHomeUrl() {
     if (currentList === "popular") {
@@ -40,6 +49,10 @@ export default function Home() {
       return getInCinemaAPI;
     }
   }
+
+  useEffect(() => {
+    window.scrollTo(0, userPosition.scroll);
+  }, []);
 
   useEffect(() => {
     setLoading(true);
@@ -70,7 +83,11 @@ export default function Home() {
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mr-8 mb-6">
-            {!loading && Genres.length > 0 && PopularMovies.length > 0 ? PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard movie={movie} Genres={Genres} />}</div>) : <MoviesSkeleton />}
+            {!loading && Genres.length > 0 && PopularMovies.length > 0 ? (
+              PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard onMovieDetails={onMovieDetails} movie={movie} Genres={Genres} />}</div>)
+            ) : (
+              <MoviesSkeleton />
+            )}
           </div>
           <div className="text-center mb-6">
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
