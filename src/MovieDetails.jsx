@@ -110,7 +110,7 @@ export default function MovieDetails() {
 
               <div>
                 <div className="px-8 pt-4 pb-10 h-full ">
-                  <div className="flex flex-col justify-between h-full">
+                  <div className="flex flex-col justify-around h-full">
                     <div className="flex flex-col gap-3">
                       <div>
                         <div className="font-bold text-2xl">{Movie.title}</div>
