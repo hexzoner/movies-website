@@ -112,26 +112,28 @@ export default function MovieDetails() {
                 <div className="px-8 pt-4 pb-10 h-full ">
                   <div className="flex flex-col justify-around h-full">
                     <div className="flex flex-col gap-3">
-                      <div>
-                        <div className="font-bold text-2xl">{Movie.title}</div>
-                        <div>{Movie.tagline.length > 0 && `"${Movie.tagline}"`}</div>
-                      </div>
-                      <div className="px-2 py-2 rounded-br-lg z-10  text-neutral-content bg-opacity-60">
-                        <svg
-                          onClick={() => onAddToFav(Movie)}
-                          className={`opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse ${favorited && "fill-current"}`}
-                          width="32"
-                          height="32"
-                          viewBox="0 0 22 19"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M10.9981 17.6694L2.51765 9.99133C-2.09133 5.38446 4.68385 -3.46071 10.9981 3.69527C17.3124 -3.46071 24.057 5.41518 19.4787 9.99133L10.9981 17.6694Z"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
+                      <div className="flex justify-between">
+                        <div>
+                          <div className="font-bold text-2xl">{Movie.title}</div>
+                          <div>{Movie.tagline.length > 0 && `"${Movie.tagline}"`}</div>
+                        </div>
+                        <div className="px-2 py-2 rounded-br-lg z-10  text-neutral-content bg-opacity-60">
+                          <svg
+                            onClick={() => onAddToFav(Movie)}
+                            className={`opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse ${favorited && "fill-current"}`}
+                            width="32"
+                            height="32"
+                            viewBox="0 0 22 19"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M10.9981 17.6694L2.51765 9.99133C-2.09133 5.38446 4.68385 -3.46071 10.9981 3.69527C17.3124 -3.46071 24.057 5.41518 19.4787 9.99133L10.9981 17.6694Z"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
                       </div>
 
                       <div className="flex justify-between">
