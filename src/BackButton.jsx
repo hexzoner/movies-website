@@ -7,7 +7,7 @@ const BackButton = () => {
   const navigate = useNavigate();
 
   const handleBackClick = () => {
-    navigate("/");
+    navigate(-1);
     setCurrentList(userPosition.currentList);
     setPage(userPosition.page);
   };

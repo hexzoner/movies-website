@@ -1,15 +1,22 @@
 import starIcon from "./assets/star-icon.svg";
 import favIcon from "./assets/heart-icon.svg";
+import favoritedIcon from "./assets/heart-icon-selected.svg";
 const imageURL = `https://image.tmdb.org/t/p//w300_and_h450_bestv2/`;
 const detailsURL = `https://www.themoviedb.org/movie/`;
 import { Link, useNavigate } from "react-router-dom";
 import noImage from "./assets/No-Image-Placeholder.png";
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
 import { MovieContex } from "./contex/MovieContex";
 
 export default function MovieCard({ movie, Genres, onMovieDetails }) {
-  const navigate = useNavigate();
-  const { onAddToFav } = useContext(MovieContex);
+  // const navigate = useNavigate();
+  const { onAddToFav, favorites, favoritedMovies } = useContext(MovieContex);
+  const [favorited, setFavorited] = useState(false);
+
+  useEffect(() => {
+    if (favorites.find((x) => x.id === movie.id)) setFavorited(true);
+    else setFavorited(false);
+  }, [favorites]);
 
   let genresString = "";
   if (Genres)
@@ -20,7 +27,7 @@ export default function MovieCard({ movie, Genres, onMovieDetails }) {
 
   function handleClick() {
     onMovieDetails();
-    navigate(`/movie/${movie.id}`);
+    // navigate(`/movie/${movie.id}`);
   }
 
   return (
@@ -44,7 +51,7 @@ export default function MovieCard({ movie, Genres, onMovieDetails }) {
 
         <div className="flex justify-between items-center bg-neutral  bg-opacity-70  rounded-b-[18px] py-2">
           <button id="add-toList" className="pointer-events-auto rounded-full font-bold p-2 w-[48px] mr-1 hover:cursor-pointer hover:animate-pulse">
-            <img onClick={() => onAddToFav(movie)} src={favIcon} alt="" />
+            <img onClick={() => onAddToFav(movie)} src={favorited ? favoritedIcon : favIcon} alt="" />
           </button>
           <span className="font-semibold text-sm text-right text-yellow-200 pr-3 italic">{genresString}</span>
         </div>

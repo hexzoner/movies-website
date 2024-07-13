@@ -4,6 +4,7 @@ import axios from "axios";
 import { apiHeaders } from "./App";
 // import { Link } from "react-router-dom";
 // import { useNavigate } from "react-router-dom";
+import favoritedIcon from "./assets/heart-icon-selected.svg";
 const imageURL = `https://image.tmdb.org/t/p/original/`;
 const genreURL = `https://api.themoviedb.org/3/genre/movie/list?language=en`;
 import BackButton from "./BackButton";
@@ -14,11 +15,12 @@ export default function MovieDetails() {
   const [cast, setCast] = useState([]);
   const [director, setDirector] = useState("");
   const { id } = useParams();
-  const { favorties, setFavorites, onAddToFav } = useContext(MovieContex);
+  const { setFavorites, onAddToFav, favorites } = useContext(MovieContex);
   // const navigate = useNavigate();
   const detailsAPI = "https://api.themoviedb.org/3/movie/";
   const creditsURL = `https://api.themoviedb.org/3/movie/${id}/credits`;
   const [Movie, setMovie] = useState({});
+
   const [MovieData, SetMovieData] = useState({
     budget: "",
     revenue: "",
@@ -32,6 +34,12 @@ export default function MovieDetails() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const [favorited, setFavorited] = useState(false);
+  useEffect(() => {
+    if (favorites.find((movie) => movie.id == id)) setFavorited(true);
+    else setFavorited(false);
+  }, [favorites]);
 
   useEffect(() => {
     setLoading(true);
@@ -103,7 +111,7 @@ export default function MovieDetails() {
               <div>
                 <div className="px-8 pt-4 pb-10 h-full ">
                   <div className="flex flex-col justify-between h-full">
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-3">
                       <div>
                         <div className="font-bold text-2xl">{Movie.title}</div>
                         <div>{Movie.tagline.length > 0 && `"${Movie.tagline}"`}</div>
@@ -111,7 +119,7 @@ export default function MovieDetails() {
                       <div className="px-2 py-2 rounded-br-lg z-10  text-neutral-content bg-opacity-60">
                         <svg
                           onClick={() => onAddToFav(Movie)}
-                          className="opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse"
+                          className={`opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse ${favorited && "fill-current"}`}
                           width="32"
                           height="32"
                           viewBox="0 0 22 19"
@@ -141,7 +149,7 @@ export default function MovieDetails() {
                       </div>
                     </div>
 
-                    <div>
+                    <div className="my-2">
                       <span>Director: </span>
                       <span className="font-semibold">{director.name}</span>
                       <div className="">
@@ -150,7 +158,7 @@ export default function MovieDetails() {
                       </div>
                     </div>
                     <div>Duration: {Movie.runtime} min</div>
-                    <div className="text-xl">{Movie.overview}</div>
+                    <div className="text-xl mt-2">{Movie.overview}</div>
                   </div>
                 </div>
               </div>
