@@ -15,7 +15,8 @@ export default function MovieDetails() {
   const [cast, setCast] = useState([]);
   const [director, setDirector] = useState("");
   const { id } = useParams();
-  const { setFavorites, onAddToFav, favorites } = useContext(MovieContex);
+  const { fetchGenres, setFavorites, onAddToFav, favorites } = useContext(MovieContex);
+  const [genres, setGenres] = useState(null);
   // const navigate = useNavigate();
   const detailsAPI = "https://api.themoviedb.org/3/movie/";
   const creditsURL = `https://api.themoviedb.org/3/movie/${id}/credits`;
@@ -30,9 +31,13 @@ export default function MovieDetails() {
   });
 
   let genresString = "";
-
   useEffect(() => {
     window.scrollTo(0, 0);
+    async function getGenres() {
+      const genres = await fetchGenres();
+      setGenres(genres);
+    }
+    getGenres();
   }, []);
 
   const [favorited, setFavorited] = useState(false);
@@ -57,28 +62,21 @@ export default function MovieDetails() {
       };
 
       axios
-        .get(genreURL, { language: "en-US" }, apiHeaders)
-        .then((res) => {
+        .get(creditsURL, apiHeaders)
+        .then(function (response) {
+          setCast(response.data.cast.slice(0, 8));
+          setDirector(response.data.crew.find((_crew) => _crew.job === "Director"));
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
+        .finally(() => {
           genresString = "";
           for (let movieGenreId of _movie.genres) genresString += res.data.genres.find((x) => x.id === movieGenreId.id).name + ", ";
           if (genresString.length > 0) genresString = genresString.slice(0, -2);
-
           SetMovieData({ ..._movieData, ["genres"]: genresString });
-        })
-        .catch((error) => console.error(error.message))
-        .finally(
-          axios
-            .get(creditsURL, apiHeaders)
-            .then(function (response) {
-              // console.log(response.data);
-              setCast(response.data.cast.slice(0, 8));
-              setDirector(response.data.crew.find((_crew) => _crew.job === "Director"));
-            })
-            .catch(function (error) {
-              console.error(error);
-            })
-            .finally(setLoading(false))
-        );
+          setLoading(false);
+        });
     });
 
     return () => setMovie(null);

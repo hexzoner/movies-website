@@ -7,7 +7,7 @@ import { MovieContex } from "./contex/MovieContex";
 const key = "movies-page";
 
 export default function Home() {
-  const { position, setPosition, page, setPage, currentList, setCurrentList, userPosition } = useContext(MovieContex);
+  const { fetchGenres, position, setPosition, page, setPage, currentList, setCurrentList, userPosition } = useContext(MovieContex);
 
   const [totalPages, setTotalPages] = useState(1);
   const getPopularMoviesAPI = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${page}`;
@@ -20,7 +20,6 @@ export default function Home() {
   let popularMoviesData = [];
 
   const [PopularMovies, SetPopularMovies] = useState([]);
-  const [Genres, SetGenres] = useState([]);
 
   const [pageTitle, setPageTitle] = useState("Popular Movies");
 
@@ -54,6 +53,15 @@ export default function Home() {
     window.scrollTo(0, userPosition.scroll);
   }, []);
 
+  const [genres, setGenres] = useState(null);
+  useEffect(() => {
+    async function getGenres() {
+      const genres = await fetchGenres();
+      setGenres(genres);
+    }
+    getGenres();
+  }, []);
+
   useEffect(() => {
     setLoading(true);
     axios
@@ -64,13 +72,7 @@ export default function Home() {
         setTotalPages(res.data.total_pages);
       })
       .catch((error) => console.error(error.message))
-      .finally(
-        axios
-          .get(genreURL, apiHeaders)
-          .then((res) => SetGenres(res.data.genres))
-          .catch((error) => console.error(error.message))
-          .finally(setLoading(false))
-      );
+      .finally(setLoading(false));
   }, [currentList, page]);
 
   return (
@@ -83,8 +85,8 @@ export default function Home() {
             <Pagination page={page} setPage={setPage} totalPages={totalPages} />
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 mr-8 mb-6">
-            {!loading && Genres.length > 0 && PopularMovies.length > 0 ? (
-              PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard onMovieDetails={onMovieDetails} movie={movie} Genres={Genres} />}</div>)
+            {!loading && PopularMovies.length > 0 ? (
+              PopularMovies.map((movie) => <div key={movie.id}>{<MovieCard onMovieDetails={onMovieDetails} movie={movie} Genres={genres} />}</div>)
             ) : (
               <MoviesSkeleton />
             )}

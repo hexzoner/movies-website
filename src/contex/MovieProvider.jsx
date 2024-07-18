@@ -1,12 +1,18 @@
 import { MovieContex } from "./MovieContex";
 import { useState, useEffect } from "react";
 import { saveFavorites, loadFavorites } from "../utilities/movie-storage";
+import axios from "axios";
+import { apiHeaders } from "../App";
 
 export const MovieProvider = ({ children }) => {
   const [position, setPosition] = useState(null);
   const [page, setPage] = useState(1);
   const [currentList, setCurrentList] = useState("popular");
   const [favorites, setFavorites] = useState([]);
+  const [genres, setGenres] = useState([]);
+
+  // let genres = [];
+
   let userPosition = { page: 1, scroll: 0, currentList: "popular" };
 
   const favoritedMovies = [];
@@ -30,8 +36,41 @@ export const MovieProvider = ({ children }) => {
     // console.log(favoritedMovies);
   }
 
+  // async function getGenres() {
+  //   const genreURL = `https://api.themoviedb.org/3/genre/movie/list?language=en`;
+  //   if (genres.length === 0) {
+  //     console.log("Getting genres from the server...");
+  //     axios
+  //       .get(genreURL, apiHeaders)
+  //       .then((res) => {
+  //         setGenres(res.data.genres);
+  //         return res.data.genres;
+  //       })
+  //       .catch((error) => console.error(error.message));
+  //   } else {
+  //     // console.log("Using local genres...");
+  //     return genres;
+  //   }
+  // }
+
+  function fetchGenres() {
+    const genreURL = `https://api.themoviedb.org/3/genre/movie/list?language=en`;
+    return new Promise((resolve, reject) => {
+      if (genres.length === 0) {
+        // console.log("Getting genres from the server...");
+        axios
+          .get(genreURL, apiHeaders)
+          .then((res) => {
+            setGenres(res.data.genres);
+            resolve(res.data.genres);
+          })
+          .catch((err) => reject(err));
+      } else resolve(genres);
+    });
+  }
+
   return (
-    <MovieContex.Provider value={{ position, setPosition, page, setPage, currentList, setCurrentList, userPosition, favorites, setFavorites, onAddToFav, favoritedMovies }}>
+    <MovieContex.Provider value={{ genres, fetchGenres, position, setPosition, page, setPage, currentList, setCurrentList, userPosition, favorites, setFavorites, onAddToFav, favoritedMovies }}>
       {children}
     </MovieContex.Provider>
   );
