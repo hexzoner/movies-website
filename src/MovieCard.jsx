@@ -19,7 +19,8 @@ export default function MovieCard({ movie, Genres, onMovieDetails }) {
   }, [favorites]);
 
   let genresString = "";
-  if (Genres)
+
+  if (Genres && Genres.length && movie.genre_ids)
     for (let movieGenreId of movie.genre_ids) {
       genresString += Genres.find((x) => x.id === movieGenreId).name + ", ";
     }

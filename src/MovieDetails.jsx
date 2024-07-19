@@ -15,7 +15,8 @@ export default function MovieDetails() {
   const [cast, setCast] = useState([]);
   const [director, setDirector] = useState("");
   const { id } = useParams();
-  const { setFavorites, onAddToFav, favorites } = useContext(MovieContex);
+  const { fetchGenres, setFavorites, onAddToFav, favorites } = useContext(MovieContex);
+  const [genres, setGenres] = useState(null);
   // const navigate = useNavigate();
   const detailsAPI = "https://api.themoviedb.org/3/movie/";
   const creditsURL = `https://api.themoviedb.org/3/movie/${id}/credits`;
@@ -30,9 +31,13 @@ export default function MovieDetails() {
   });
 
   let genresString = "";
-
   useEffect(() => {
     window.scrollTo(0, 0);
+    async function getGenres() {
+      const genres = await fetchGenres();
+      setGenres(genres);
+    }
+    getGenres();
   }, []);
 
   const [favorited, setFavorited] = useState(false);
@@ -57,28 +62,21 @@ export default function MovieDetails() {
       };
 
       axios
-        .get(genreURL, { language: "en-US" }, apiHeaders)
-        .then((res) => {
+        .get(creditsURL, apiHeaders)
+        .then(function (response) {
+          setCast(response.data.cast.slice(0, 8));
+          setDirector(response.data.crew.find((_crew) => _crew.job === "Director"));
+        })
+        .catch(function (error) {
+          console.error(error);
+        })
+        .finally(() => {
           genresString = "";
           for (let movieGenreId of _movie.genres) genresString += res.data.genres.find((x) => x.id === movieGenreId.id).name + ", ";
           if (genresString.length > 0) genresString = genresString.slice(0, -2);
-
           SetMovieData({ ..._movieData, ["genres"]: genresString });
-        })
-        .catch((error) => console.error(error.message))
-        .finally(
-          axios
-            .get(creditsURL, apiHeaders)
-            .then(function (response) {
-              // console.log(response.data);
-              setCast(response.data.cast.slice(0, 8));
-              setDirector(response.data.crew.find((_crew) => _crew.job === "Director"));
-            })
-            .catch(function (error) {
-              console.error(error);
-            })
-            .finally(setLoading(false))
-        );
+          setLoading(false);
+        });
     });
 
     return () => setMovie(null);
@@ -112,26 +110,28 @@ export default function MovieDetails() {
                 <div className="px-8 pt-4 pb-10 h-full ">
                   <div className="flex flex-col justify-around h-full">
                     <div className="flex flex-col gap-3">
-                      <div>
-                        <div className="font-bold text-2xl">{Movie.title}</div>
-                        <div>{Movie.tagline.length > 0 && `"${Movie.tagline}"`}</div>
-                      </div>
-                      <div className="px-2 py-2 rounded-br-lg z-10  text-neutral-content bg-opacity-60">
-                        <svg
-                          onClick={() => onAddToFav(Movie)}
-                          className={`opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse ${favorited && "fill-current"}`}
-                          width="32"
-                          height="32"
-                          viewBox="0 0 22 19"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M10.9981 17.6694L2.51765 9.99133C-2.09133 5.38446 4.68385 -3.46071 10.9981 3.69527C17.3124 -3.46071 24.057 5.41518 19.4787 9.99133L10.9981 17.6694Z"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
+                      <div className="flex justify-between">
+                        <div>
+                          <div className="font-bold text-2xl">{Movie.title}</div>
+                          <div>{Movie.tagline.length > 0 && `"${Movie.tagline}"`}</div>
+                        </div>
+                        <div className="px-2 py-2 rounded-br-lg z-10  text-neutral-content bg-opacity-60">
+                          <svg
+                            onClick={() => onAddToFav(Movie)}
+                            className={`opacity-100 stroke-current hover:cursor-pointer hover:animate-pulse ${favorited && "fill-current"}`}
+                            width="32"
+                            height="32"
+                            viewBox="0 0 22 19"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                              d="M10.9981 17.6694L2.51765 9.99133C-2.09133 5.38446 4.68385 -3.46071 10.9981 3.69527C17.3124 -3.46071 24.057 5.41518 19.4787 9.99133L10.9981 17.6694Z"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
+                        </div>
                       </div>
 
                       <div className="flex justify-between">

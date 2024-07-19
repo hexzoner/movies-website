@@ -2,6 +2,7 @@ import searchIcon from "./assets/Search.png";
 import tmdbLogo from "./assets/tmbd-logo.svg";
 import { NavLink, Link } from "react-router-dom";
 import ThemesSwap from "./ThemesSwap";
+import Search from "./Search";
 
 // const navLinkDefault = "hover:cursor-pointer mr-4 md:mr-0";
 // const navLinkHighlighted = "underline text-[#00B9AE]";
@@ -32,32 +33,7 @@ export default function Navbar() {
             About
           </NavLink>
 
-          <div className="flex mr-8 xl:mr-0 w-full md:w-auto ml-0 md:ml-0 ">
-            <div className="px-4 left-[53px] rounded-l-[13px] relative opacity-50" id="search-img-wrapper">
-              {/* <img className="relative w-fit top-[17px]" src={searchIcon} alt="" id="search-img" /> */}
-              <svg className="stroke-current mt-4" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M1 11.4783C1 15.8486 1.78302 18.3581 3.30283 19.8237C4.83125 21.2975 7.35021 21.9565 11.4783 21.9565C15.6063 21.9565 18.1253 21.2975 19.6537 19.8237C21.1735 18.3581 21.9565 15.8486 21.9565 11.4783C21.9565 7.10793 21.1735 4.59845 19.6537 3.13291C18.1253 1.65907 15.6063 1.00002 11.4783 1.00002C7.35021 1.00002 4.83125 1.65907 3.30283 3.13291C1.78302 4.59845 1 7.10793 1 11.4783Z"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-                <path d="M22.9565 22.9565L20.3478 20.3478" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-              </svg>
-            </div>
-
-            <form id="search-form" className="w-full">
-              <input
-                className={`bg-base-100 text-base-content placeholder-base-content placeholder-opacity-50 
-                input input-bordered input-md rounded-xl border-[2px]
-                pl-[64px] h-[56px] font-medium text-lg w-full md:w-[250px] lg:w-[500px]`}
-                type="text"
-                id="search"
-                name="search"
-                placeholder="Search"
-              />
-            </form>
-          </div>
+          <Search />
           <ThemesSwap />
         </div>
       </div>
