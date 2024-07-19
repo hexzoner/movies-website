@@ -22,7 +22,6 @@ export const MovieProvider = ({ children }) => {
   }, []);
 
   function onAddToFav(movie) {
-    // console.log(movie);
     const found = favorites.find((x) => x.id === movie.id);
     if (found) {
       const a = favorites.filter((x) => x.id !== movie.id);
@@ -35,23 +34,6 @@ export const MovieProvider = ({ children }) => {
     // favoritedMovies.push(movie);
     // console.log(favoritedMovies);
   }
-
-  // async function getGenres() {
-  //   const genreURL = `https://api.themoviedb.org/3/genre/movie/list?language=en`;
-  //   if (genres.length === 0) {
-  //     console.log("Getting genres from the server...");
-  //     axios
-  //       .get(genreURL, apiHeaders)
-  //       .then((res) => {
-  //         setGenres(res.data.genres);
-  //         return res.data.genres;
-  //       })
-  //       .catch((error) => console.error(error.message));
-  //   } else {
-  //     // console.log("Using local genres...");
-  //     return genres;
-  //   }
-  // }
 
   function fetchGenres() {
     const genreURL = `https://api.themoviedb.org/3/genre/movie/list?language=en`;

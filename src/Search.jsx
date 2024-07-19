@@ -1,4 +1,5 @@
 import { useState, useEffect, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { apiHeaders } from "./App";
 import { MovieContex } from "./contex/MovieContex";
@@ -6,6 +7,7 @@ import Pagination from "./Pagination";
 import noImage from "./assets/No-Image-Placeholder.png";
 import starIcon from "./assets/star-icon.svg";
 import favIcon from "./assets/heart-icon.svg";
+import favoritedIcon from "./assets/heart-icon-selected.svg";
 
 export default function Search() {
   const [adult, setAdult] = useState(true);
@@ -17,7 +19,7 @@ export default function Search() {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [totalResults, setTotalResults] = useState([]);
 
-  const { fetchGenres, genres } = useContext(MovieContex);
+  const { fetchGenres, genres, favorites } = useContext(MovieContex);
 
   const searchURL = `https://api.themoviedb.org/3/search/movie?include_adult=${adult}&language=en-US&query=${searchInput}&page=${page}`;
 
@@ -122,15 +124,33 @@ const SearchDialog = ({ totalPages, page, setPage, totalResults, loading, search
 };
 
 const SearchResultCard = ({ movie }) => {
+  const { favorites, onAddToFav } = useContext(MovieContex);
+  const [favorited, setFavorited] = useState(false);
+
+  useEffect(() => {
+    if (favorites.find((x) => x.id === movie.id)) setFavorited(true);
+    else setFavorited(false);
+  }, [favorites]);
+
   const imageURL = `https://image.tmdb.org/t/p//w300_and_h450_bestv2/`;
   return (
     <>
       <div className="flex  bg-base-300 text-base-content relative w-full">
-        <img id="search-image" className="h-[180px] w-[120px] object-cover hover:cursor-pointer" src={!movie.poster_path ? noImage : `${imageURL}${movie.poster_path}`} alt={movie.title} />
+        <Link to={`/movie/${movie.id}`}>
+          <img
+            onClick={() => document.getElementById("search-dialog").close()}
+            id="search-image"
+            className="h-[180px] w-[120px] object-cover hover:cursor-pointer"
+            src={!movie.poster_path ? noImage : `${imageURL}${movie.poster_path}`}
+            alt={movie.title}
+          />
+        </Link>
         <div className="px-4 w-full flex flex-col max-h-[160px] m-1 justify-evenly">
-          <p id="search-movie-title" className="font-bold text-lg sm:max-w-fit text-[#00b9ae] hover:cursor-pointer">
-            {movie.title}
-          </p>
+          <Link to={`/movie/${movie.id}`}>
+            <p onClick={() => document.getElementById("search-dialog").close()} id="search-movie-title" className="font-bold text-lg sm:max-w-fit text-[#00b9ae] hover:cursor-pointer">
+              {movie.title}
+            </p>
+          </Link>
           <div className="flex justify-start gap-6 items-center">
             <p className="text-sm">{movie.release_date.length > 0 ? movie.release_date.slice(0, -6) : ""}</p>
             <span className="flex font-semibold text-sm text-center">
@@ -144,7 +164,7 @@ const SearchResultCard = ({ movie }) => {
           </p>
           <div id="search-fav" className="hover:cursor-pointer">
             <div className="bg-[#16181e] opacity-40 self-start p-2 absolute rounded-md right-1 top-1 h-[33px] w-[36px]"></div>
-            <img className="self-start p-2 absolute rounded-md right-1 top-1" src={favIcon} alt="" />
+            <img className="self-start p-2 absolute rounded-md right-1 top-1" onClick={() => onAddToFav(movie)} src={favorited ? favoritedIcon : favIcon} alt="" />
           </div>
         </div>
       </div>
