@@ -19,10 +19,18 @@ export default function Search() {
   const [showSearchDialog, setShowSearchDialog] = useState(false);
   const [totalResults, setTotalResults] = useState([]);
 
-  const { fetchGenres, genres, favorites } = useContext(MovieContex);
+  const { fetchGenres, favorites } = useContext(MovieContex);
 
   const searchURL = `https://api.themoviedb.org/3/search/movie?include_adult=${adult}&language=en-US&query=${searchInput}&page=${page}`;
 
+  const [genres, setGenres] = useState(null);
+  useEffect(() => {
+    async function getGenres() {
+      const genres = await fetchGenres();
+      setGenres(genres);
+    }
+    getGenres();
+  }, []);
   useEffect(() => {
     // if (page === 1) return;
     if (loading) return;
@@ -80,12 +88,12 @@ export default function Search() {
         />
       </form>
       {/* {showSearchDialog && <SearchDialog searchInput={searchInput} totalPages={totalPages} page={page} setPage={setPage} totalResults={totalResults} searchResults={searchResults} loading={loading} />} */}
-      <SearchDialog searchInput={searchInput} totalPages={totalPages} page={page} setPage={setPage} totalResults={totalResults} searchResults={searchResults} loading={loading} />
+      <SearchDialog genres={genres} searchInput={searchInput} totalPages={totalPages} page={page} setPage={setPage} totalResults={totalResults} searchResults={searchResults} loading={loading} />
     </div>
   );
 }
 
-const SearchDialog = ({ totalPages, page, setPage, totalResults, loading, searchInput, searchResults }) => {
+const SearchDialog = ({ totalPages, page, setPage, totalResults, loading, searchInput, searchResults, genres }) => {
   return (
     <dialog id="search-dialog" className="modal">
       <div className="modal-box border-2 border-opacity-50 mx-auto max-w-[1200px] container py-4 px-4">
@@ -109,7 +117,7 @@ const SearchDialog = ({ totalPages, page, setPage, totalResults, loading, search
         <div id="search-results" className="grid grid-cols-1 xl:grid-cols-2 gap-2 min-h-[100px]">
           {!loading ? (
             searchResults.map((movie) => {
-              return <SearchResultCard key={movie.id} movie={movie} />;
+              return <SearchResultCard key={movie.id} movie={movie} genres={genres} />;
             })
           ) : (
             <div className="flex items-center justify-center">-----LOADING-----</div>
@@ -123,7 +131,7 @@ const SearchDialog = ({ totalPages, page, setPage, totalResults, loading, search
   );
 };
 
-const SearchResultCard = ({ movie }) => {
+const SearchResultCard = ({ movie, genres }) => {
   const { favorites, onAddToFav } = useContext(MovieContex);
   const [favorited, setFavorited] = useState(false);
 
@@ -131,6 +139,13 @@ const SearchResultCard = ({ movie }) => {
     if (favorites.find((x) => x.id === movie.id)) setFavorited(true);
     else setFavorited(false);
   }, [favorites]);
+
+  let genresString = "";
+  if (genres && genres.length && movie.genre_ids)
+    for (let movieGenreId of movie.genre_ids) {
+      genresString += genres.find((x) => x.id === movieGenreId).name + ", ";
+    }
+  if (genresString.length > 0) genresString = genresString.slice(0, -2);
 
   const imageURL = `https://image.tmdb.org/t/p//w300_and_h450_bestv2/`;
   return (
@@ -140,7 +155,7 @@ const SearchResultCard = ({ movie }) => {
           <img
             onClick={() => document.getElementById("search-dialog").close()}
             id="search-image"
-            className="h-[180px] w-[120px] object-cover hover:cursor-pointer"
+            className="h-[180px] w-[140px] object-cover hover:cursor-pointer"
             src={!movie.poster_path ? noImage : `${imageURL}${movie.poster_path}`}
             alt={movie.title}
           />
@@ -157,7 +172,7 @@ const SearchResultCard = ({ movie }) => {
               <img src={starIcon} alt="star" width="16px" className="flex mr-2" />
               {movie.vote_average.toFixed(1)}
             </span>
-            <span className="font-semibold text-sm text-right italic text-[#00b9ae]">Genres...</span>
+            <span className="font-semibold text-sm text-right italic text-[#00b9ae]">{genresString}</span>
           </div>
           <p id="movie-description" className="text-ellipsis overflow-hidden text-sm mt-2">
             {movie.overview}
